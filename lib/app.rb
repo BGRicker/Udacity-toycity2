@@ -1,5 +1,4 @@
 def setup
-  report_file = $stderr
   require 'json'
   path = File.join(File.dirname(__FILE__), '../data/products.json')
   file = File.read(path)
@@ -7,51 +6,54 @@ def setup
   $report_file = File.new("report.txt", "w+")
 end
 
-def date
-  "Report Run At: #{Time.now.strftime("%m/%d/%Y %H:%M:%S %p")}"
+def store_to_file (output="")
+    $report_file.puts output 
 end
 
-def ascii(options={})
-  if options[:products]
-    puts "\n                     _            _       "
-    puts "                    | |          | |      "
-    puts " _ __  _ __ ___   __| |_   _  ___| |_ ___ "
-    puts "| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|"
-    puts "| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\"
-    puts "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/"
-    puts "| |                                       "
-    puts "|_|                                      \n\n "
-  elsif options[:brand]
-    puts "\n _                         _     "
-    puts "| |                       | |    "
-    puts "| |__  _ __ __ _ _ __   __| |___ "
-    puts "| '_ \\| '__/ _` | '_ \\ / _` / __|"
-    puts "| |_) | | | (_| | | | | (_| \\__ \\"
-    puts "|_.__/|_|  \\__,_|_| |_|\\__,_|___/\n\n"
-  elsif options[:sales]
-    puts "\n           _                                       _    "
-    puts "          | |                                     | |   "
-    puts " ___  __ _| | ___  ___   _ __ ___ _ __   ___  _ __| |_  "
-    puts "/ __|/ _` | |/ _ \\/ __| | '__/ _ \\ '_ \\ / _ \\| '__| __| "
-    puts "\\__ \\ (_| | |  __/\\__ \\ | | |  __/ |_) | (_) | |  | |_  "
-    puts "|___/\\__,_|_|\\___||___/ |_|  \\___| .__/ \\___/|_|   \\__| "
-    puts "                                 | |                   "
-    puts "                                 |_|\n\n"
+def date
+  "Report Run At: #{Time.now.strftime("%m/%d/%Y %H:%M:%S %p")}\n\n"
+end
+
+def ascii(type)
+  if type == "products"
+    store_to_file "\n                     _            _       "
+    store_to_file "                    | |          | |      "
+    store_to_file " _ __  _ __ ___   __| |_   _  ___| |_ ___ "
+    store_to_file "| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|"
+    store_to_file "| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\"
+    store_to_file "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/"
+    store_to_file "| |                                       "
+    store_to_file "|_|                                      \n\n "
+  elsif type == "brands"
+    store_to_file "\n _                         _     "
+    store_to_file "| |                       | |    "
+    store_to_file "| |__  _ __ __ _ _ __   __| |___ "
+    store_to_file "| '_ \\| '__/ _` | '_ \\ / _` / __|"
+    store_to_file "| |_) | | | (_| | | | | (_| \\__ \\"
+    store_to_file "|_.__/|_|  \\__,_|_| |_|\\__,_|___/\n\n"
+  elsif type == "sales"
+    store_to_file "\n           _                                       _    "
+    store_to_file "          | |                                     | |   "
+    store_to_file " ___  __ _| | ___  ___   _ __ ___ _ __   ___  _ __| |_  "
+    store_to_file "/ __|/ _` | |/ _ \\/ __| | '__/ _ \\ '_ \\ / _ \\| '__| __| "
+    store_to_file "\\__ \\ (_| | |  __/\\__ \\ | | |  __/ |_) | (_) | |  | |_  "
+    store_to_file "|___/\\__,_|_|\\___||___/ |_|  \\___| .__/ \\___/|_|   \\__| "
+    store_to_file "                                 | |                   "
+    store_to_file "                                 |_|\n\n"
   end
 end
-
 
 def products
   $products_hash["items"].each do |item|
     total_sales = item["purchases"].map { |purchase| purchase["price"] }.reduce(:+)
     average_cost = total_sales / item["purchases"].count
     total_purchases = item["purchases"].count
-    puts "- #{item["title"]} "
-    puts "\tretail price - $#{item["full-price"].to_f}"
-    puts "\tpurchases  - #{total_purchases}"
-    puts "\ttotal sales - $#{total_sales}"
-    puts "\taverage cost - $#{average_cost}"
-    puts "\taverage discount - $#{(item["full-price"].to_f - average_cost)}\n\n"
+    store_to_file "- #{item["title"]} "
+    store_to_file "\tretail price - $#{item["full-price"].to_f}"
+    store_to_file "\tpurchases  - #{total_purchases}"
+    store_to_file "\ttotal sales - $#{total_sales}"
+    store_to_file "\taverage cost - $#{average_cost}"
+    store_to_file "\taverage discount - $#{(item["full-price"].to_f - average_cost)}\n\n"
   end
 end
 
@@ -86,27 +88,27 @@ def brands
         total_price = total_price + ind["price"].to_f
       end
     end
-    puts "Brand - #{brand}"
-    puts "\ttotal products in stock - #{stock}"
-    puts "\taverage price - $#{sprintf "%.2f", total_price / sales}"
-    puts "\ttotal in sales - $#{sprintf "%.2f", total_price}\n\n"
+    store_to_file "Brand - #{brand}"
+    store_to_file "\ttotal products in stock - #{stock}"
+    store_to_file "\taverage price - $#{sprintf "%.2f", total_price / sales}"
+    store_to_file "\ttotal in sales - $#{sprintf "%.2f", total_price}\n\n"
 
   end
 end
 
 def create_report
   # Print today's date
-  print date
+  store_to_file date
 
   # Print "Sales Report" in ascii art
-  ascii(sales: true)
+  store_to_file ascii("sales")
 
   # Print "Products" in ascii art
-  ascii(products: true)
+  store_to_file ascii("products")
   products
 
   # Print "Brands" in ascii art
-  ascii(brand: true)
+  ascii("brands")
   brands
 end
 
