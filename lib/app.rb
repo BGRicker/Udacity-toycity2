@@ -43,17 +43,42 @@ def ascii(type)
   end
 end
 
-def products
+def total_sales(item)
+  item["purchases"].map { |purchase| purchase["price"] }.reduce(:+)
+end
+
+def average_cost(item)
+  total_sales(item) / item["purchases"].count
+end
+
+def name(item)
+  "- #{item["title"]}"
+end
+
+def retail_price(item)
+  item["full-price"].to_f
+end
+
+def total_purchases(item)
+  item["purchases"].count
+end
+
+def average_cost(item)
+  total_sales(item).to_f / total_purchases(item).to_i
+end
+
+def average_discount(item)
+  sprintf "%.2f", (retail_price(item).to_f - average_cost(item))
+end
+
+def products_base
   $products_hash["items"].each do |item|
-    total_sales = item["purchases"].map { |purchase| purchase["price"] }.reduce(:+)
-    average_cost = total_sales / item["purchases"].count
-    total_purchases = item["purchases"].count
-    store_to_file "- #{item["title"]} "
-    store_to_file "\tretail price - $#{item["full-price"].to_f}"
-    store_to_file "\tpurchases  - #{total_purchases}"
-    store_to_file "\ttotal sales - $#{total_sales}"
-    store_to_file "\taverage cost - $#{average_cost}"
-    store_to_file "\taverage discount - $#{(item["full-price"].to_f - average_cost)}\n\n"
+    store_to_file name(item)
+    store_to_file "\t\tretail price  - $#{retail_price(item)}"
+    store_to_file "\t\tpurchases  - #{total_purchases(item)}"
+    store_to_file "\t\ttotal sales - $#{total_sales(item)}"
+    store_to_file "\t\taverage cost - $#{average_cost(item)}"
+    store_to_file "\t\taverage discount - $#{average_discount(item)}\n\n"
   end
 end
 
@@ -72,9 +97,12 @@ end
 # Calculate and print the average price of the brand's toys
 # Calculate and print the total sales volume of all the brand's toys combined
 
+def brands_array
+  ($products_hash['items'].map { |toy| toy['brand'] }).uniq
+end
+
 def brands
-  brands = ($products_hash['items'].map { |toy| toy['brand'] }).uniq
-  brands.each do |brand|
+  brands_array.each do |brand|
     products = $products_hash["items"].select { |item| item["brand"] == brand }
 
     stock = 0.0
@@ -105,7 +133,7 @@ def create_report
 
   # Print "Products" in ascii art
   store_to_file ascii("products")
-  products
+  products_base
 
   # Print "Brands" in ascii art
   ascii("brands")
