@@ -1,0 +1,35 @@
+commit 079d49c8779010067c0022a21e2a779ab07e1aa2
+Author: Ben Ricker <BGRicker@gmail.com>
+Date:   Sun Jun 26 10:35:55 2016 -0400
+
+    brands refactored into methods
+
+commit d915fa0d757579c1cdb0e1e580c6a2de6aa368fc
+Author: Ben Ricker <BGRicker@gmail.com>
+Date:   Fri Jun 24 23:02:53 2016 -0400
+
+    products in methods, brands array in method
+
+commit 35ebcfc8e8adef1052b7fb27a30cfce442cbdcad
+Author: Ben Ricker <BGRicker@gmail.com>
+Date:   Thu Jun 23 15:03:44 2016 -0400
+
+    outputting to file correctly, pre-cleanup
+
+commit c7d1647ed52c52a03634d1efc235998d4213eea8
+Author: Ben Ricker <BGRicker@gmail.com>
+Date:   Fri Jun 17 23:33:56 2016 -0400
+
+    outputting correctly, need to eliminate puts/print
+
+commit e9015ad4f27a93f956b4ff18a58f834161179d08
+Author: Ben Ricker <BGRicker@gmail.com>
+Date:   Fri Jun 17 22:39:47 2016 -0400
+
+    starter methods, ASCII, date
+
+commit 59c596c3f4d935c74a0ef1f5e206da0afec03a54
+Author: Ben Ricker <BGRicker@gmail.com>
+Date:   Thu Jun 16 07:40:30 2016 -0400
+
+    initial commit
