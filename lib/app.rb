@@ -14,6 +14,9 @@ def date
   "Report Run At: #{Time.now.strftime("%m/%d/%Y %H:%M:%S %p")}\n\n"
 end
 
+#originally had ascii using products, brands, and sales as options hashes but
+#didn't think that really benefitted it. Thought I was doing it just for the
+#sake of using option hashes
 def ascii(type)
   if type == "products"
     store_to_file "\n                     _            _       "
@@ -101,26 +104,53 @@ def brands_array
   ($products_hash['items'].map { |toy| toy['brand'] }).uniq
 end
 
+def products_array(brand)
+  $products_hash["items"].select { |item| item["brand"] == brand }
+end
+
+def brand_name(brand)
+  brand
+end
+
+def stock(brand)
+  total_stock = 0
+  brands = $products_hash["items"].select { |item| item["brand"] == brand }
+  brands.each do |stock_count|
+    total_stock = total_stock + stock_count["stock"].to_i
+  end
+  total_stock
+end
+
+def total_brand_sales(brand)
+  total_sales = 0
+  brands = $products_hash["items"].select { |item| item["brand"] == brand }
+  brands.each do |sales|
+    total_sales = total_sales + sales["purchases"].length
+  end
+  total_sales
+end
+
+def total_brand_price(brand)
+  total_price = 0.0
+  brands = $products_hash["items"].select { |item| item["brand"] == brand }
+  brands.each do |sales|
+    sales["purchases"].each do |ind|
+      total_price = total_price + ind["price"].to_f
+    end
+  end
+    sprintf "%.2f", total_price
+end
+
+def average_brand_price(brand)
+  sprintf "%.2f", (total_brand_price(brand).to_f / total_brand_sales(brand))
+end
+
 def brands
   brands_array.each do |brand|
-    products = $products_hash["items"].select { |item| item["brand"] == brand }
-
-    stock = 0.0
-    total_price = 0.0
-    sales = 0.0
-
-    products.each do |product|
-      stock = stock + product["stock"]
-      sales = sales + product["purchases"].length
-      product["purchases"].each do |ind|
-        total_price = total_price + ind["price"].to_f
-      end
-    end
-    store_to_file "Brand - #{brand}"
-    store_to_file "\ttotal products in stock - #{stock}"
-    store_to_file "\taverage price - $#{sprintf "%.2f", total_price / sales}"
-    store_to_file "\ttotal in sales - $#{sprintf "%.2f", total_price}\n\n"
-
+    store_to_file "Brand - #{brand_name(brand)}"
+    store_to_file "\t\ttotal products in stock - #{stock(brand)}"
+    store_to_file "\t\taverage price - $#{average_brand_price(brand)}"
+    store_to_file "\t\ttotal in sales - $#{total_brand_price(brand)}"
   end
 end
 
